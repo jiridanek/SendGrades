@@ -30,6 +30,9 @@ public class CommandLineArgs {
     @Parameter(names = "--parameters", description = "Print description for all additional parameters -Dsomething for a selected action. Use together with '--action'.")
     public boolean PARAMETERS = false;
 
+    @Parameter(names = "--help", help = true)
+    public boolean help;
+
     //test
     public static void main(String[] args) {
         CommandLineArgs myCommandLineArgs = new CommandLineArgs();

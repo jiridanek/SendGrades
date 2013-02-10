@@ -20,7 +20,11 @@ public class CLI {
     public static void main(String[] args) {
         CommandLineArgs myCommandLineArgs = new CommandLineArgs();
         try {
-            new JCommander(myCommandLineArgs, args);
+            JCommander jc = new JCommander(myCommandLineArgs, args);
+            if (myCommandLineArgs.help) {
+                jc.usage();
+                System.exit(0);
+            }
         } catch (com.beust.jcommander.ParameterException e) {
             System.out.println("Chyba pri zadavani parametru");
             System.out.println(e);
@@ -36,6 +40,10 @@ public class CLI {
             System.setProperty("org.apache.commons.logging.simplelog.log.httpclient.wire", "debug");
             System.setProperty("org.apache.commons.logging.simplelog.log.org.apache.http", "debug");
             System.setProperty("org.apache.commons.logging.simplelog.log.org.apache.http.headers", "debug");
+        }
+
+        if (myCommandLineArgs.help) {
+
         }
 
         if (myCommandLineArgs.ACTION == null) {
