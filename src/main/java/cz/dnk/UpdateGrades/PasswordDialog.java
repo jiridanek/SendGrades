@@ -18,10 +18,11 @@ package cz.dnk.UpdateGrades;/* http://www.java2s.com/Code/Java/Swing-Components/
  */
 
 
+import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.util.*;
-import javax.swing.*;
+import java.util.Locale;
+import java.util.ResourceBundle;
 
 /**
  * A modal dialog that asks the user for a user name and password.

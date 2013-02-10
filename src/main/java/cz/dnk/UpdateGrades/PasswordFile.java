@@ -1,6 +1,9 @@
 package cz.dnk.UpdateGrades;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 
 /**
  * Created with IntelliJ IDEA.
