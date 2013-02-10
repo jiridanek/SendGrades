@@ -13,6 +13,9 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLDecoder;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -45,40 +48,34 @@ public class GradesAction implements IAction {
         // no idea where this comes from
         exppar = "a";
 
-        if (fakulta == null || obdobi == null || predmet == null || nbloku == null || exppar == null) {
-            System.out.println("Some of the required Additional parameters is not specified.\nUse --parameters together with the --action to see the list.");
-            return;
-        }
+        List<String> keys = new LinkedList<String>();
+        keys.add("fakulta");
+        keys.add("obdobi");
+        keys.add("predmet");
+        keys.add("nbloku");
+        keys.add("file");
+        keys.add("slid");
+        keys.add("slho");
+        keys.add("ostry");
 
-        if (params.get("file") == null) {
-            System.out.println("The -Dfile Additional parameter is not specified.");
-            return;
-        }
+        boolean failed = false;
 
-        if (params.get("slid") == null) {
-            System.out.println("The -Dslid Additional parameter is not specified.");
-            return;
-        }
-
-        if (params.get("slho") == null) {
-            System.out.println("The -Dslho Additional parameter is not specified.");
-            return;
-        }
-
-        if (params.get("nerozlisovat_bloky") == null) {
-            System.out.println("The -Dnerozlisovat_bloky Additional parameter is not specified.");
-            return;
-        }
-
-        if (params.get("ostry") == null) {
-            System.out.println("The -Dostry Additional parameter is not specified.");
-            return;
+        for (String key:keys) {
+            if (params.get(key) == null) {
+                System.out.println("The -D'"+ key + "' Additional parameter is not specified.");
+                failed = true;
+            }
         }
 
         File file = new File(params.get("file"));
         if (!file.exists()) {
             System.out.println("File '" + params.get("file") + "' does not exist.");
-            System.exit(2);
+            failed = true;
+        }
+
+        if (failed) {
+            System.out.println("Some of the required Additional parameters is not specified.\nUse --parameters together with the --action to see the list.");
+            return;
         }
 
         String magicNumber;
@@ -120,6 +117,7 @@ public class GradesAction implements IAction {
     @Override
     public void printHelp() {
         System.out.println("REQUIRED:\n");
+
         System.out.println("-Dfakulta=\"\" : use 1456 for ESF");
         System.out.println("-Dobdobi=\"\" : use 5785 for fall2012, 5786 for spring2013");
         System.out.println("-Dpredmet=\"\" : e.g, '705093'");
@@ -129,8 +127,10 @@ public class GradesAction implements IAction {
         System.out.println("-Dslid=\"\" : pořadí sloupce s identifikátorem studia (čísl. od 1)");
         System.out.println("-Dslho=\"\" : pořadí sloupce nebo sloupců s obsahem bloku (více hodnot oddělujte mezerou");
         System.out.println("-Dostry=\"\" : 'n' or 'a'; n -- import pouze na zkoušku, pro kontrolu chyb, a -- import naostro");
-        System.out.println("OPTIONAL:\n");
-        System.out.println("-Dnerozlisovat_bloky=\"\" : 1 -- Ignorovat změnu z původně exportovaného bloku na blok importovaný");
+
+        System.out.println("\nOPTIONAL:\n");
+
+        System.out.println("-Dnerozlisovat_bloky=\"\" : '1' -- Ignorovat změnu z původně exportovaného bloku na blok importovaný");
 
         System.out.println("\nWhen in doubts what values to use for -Dpredmet and -Dnbloku, visit the uploading page in web browser and use the value in address bar");
     }
@@ -265,9 +265,5 @@ public class GradesAction implements IAction {
 
         httpPost.setEntity(multipartEntity);
         return httpPost;
-    }
-
-    String getMagicNumber(){
-        return "";
     }
 }

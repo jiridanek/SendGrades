@@ -70,7 +70,7 @@ vezme soubor 0316.csv a nahraje ho do zvoleného Bloku. V tomto případě má s
 
 ####Soupis parametrů
 
-`java -jar SendGrades --action grades --parameters'
+`java -jar SendGrades-0.1.jar --action grades --parameters'
 
 	REQUIRED:
 	

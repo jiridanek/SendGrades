@@ -10,6 +10,8 @@ import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -27,55 +29,45 @@ import java.util.regex.Pattern;
  * --action file -Dfile="0316.txt" -Dnazev="mNazev" -Dpopis="mPopis" -Dnjmeno="mNjmeno" -Dopt="wr" -Dfolder="/www/374368/38786227/"
  */
 public class FileAction implements IAction {
-    /**
-     *
-     * @param file
-     * @param nazev
-     * @param popis
-     * @param njmeno
-     * @param opt er ohlásit chybu, wr přepsat, re nový přejmenovat
-     * @param magicNumber
-     * @return
-     */
     @Override
     public void perform(ISConnection connection, Map<String, String> params) {
-        String folder = params.get("folder");
-        if (folder == null) {
-            System.out.println("The -Dfolder Additional parameter is not specified.");
-            return;
+        List<String> keys = new ArrayList<String>();
+        keys.add("folder");
+        keys.add("file");
+        keys.add("nazev");
+        keys.add("popis");
+        keys.add("njmeno");
+        keys.add("opt");
+
+        boolean failed = false;
+        for(String key:keys) {
+            if (params.get(key) == null) {
+                System.out.println("The -D" + key + " Additional parameter is not specified.");
+                failed = true;
+            }
         }
-        if (params.get("file") == null) {
-            System.out.println("The -Dfile Additional parameter is not specified.");
-            return;
-        }
-        if (params.get("nazev") == null) {
-            System.out.println("The -Dnazev Additional parameter is not specified.");
-            return;
-        }
-        if (params.get("popis") == null) {
-            System.out.println("The -Dpopis Additional parameter is not specified.");
-            return;
-        }
-        if (params.get("njmeno") == null) {
-            System.out.println("The -Dnjmeno Additional parameter is not specified.");
-            return;
-        }
-        if (params.get("opt") == null) {
-            System.out.println("The -Dopt Additional parameter is not specified.");
-            return;
-        }
+
         if (!params.get("opt").equals("er") &&  !params.get("opt").equals("wr") && !params.get("opt").equals("re")) {
             System.out.println("The -Dopt Additional parameter must be 'er', 'wr' or 're'");
-            return;
+            failed = true;
         }
 
         File file = new File(params.get("file"));
+        if (!file.exists()) {
+            System.out.println("File '" + params.get("file") + "' does not exist.");
+            failed = true;
+        }
+
+        if (failed) {
+            return;
+        }
+
         String magicNumber;
 
         HttpPost openForm = OpenForm();
         String form = connection.performRequest(openForm);
-        magicNumber = extractMagicNumber(form);
-        HttpPost sendFile = SendFile(folder,
+        magicNumber = ISConnection.ExtractMagicNumber(form);
+        HttpPost sendFile = SendFile(params.get("folder"),
                 file,
                 params.get("nazev"),
                 params.get("popis"),
@@ -84,22 +76,17 @@ public class FileAction implements IAction {
                 magicNumber);
         String status = connection.performRequest(sendFile);
         String msg = ISConnection.ExtractMessage(status);
-        System.out.println(msg);
+        if (msg != null) {
+            System.out.println(msg);
+        } else {
+            System.out.println("Processing finished. Could not parse status message.");
+            CLI.ExitWithDisclaimer();
+        }
     }
 
     @Override
     public void printHelp() {
 
-    }
-
-    public String extractMagicNumber(String html) {
-        Pattern pattern = Pattern.compile("<INPUT TYPE=hidden NAME=\"_\" VALUE=\"(\\d+)\">", Pattern.CASE_INSENSITIVE);
-        Matcher matcher = pattern.matcher(html);
-        String magicNumber = null;
-        if (matcher.find()) {
-            magicNumber = matcher.group(1);
-        }
-        return magicNumber;
     }
 
     public HttpPost OpenForm() {
@@ -136,6 +123,16 @@ public class FileAction implements IAction {
         return httpPost;
     }
 
+    /**
+     *
+     * @param file
+     * @param nazev
+     * @param popis
+     * @param njmeno
+     * @param opt er ohlásit chybu, wr přepsat, re nový přejmenovat
+     * @param magicNumber
+     * @return
+     */
     public HttpPost SendFile(String furl, File file, String nazev, String popis, String njmeno, String opt, String magicNumber) {
         URIBuilder builder = new URIBuilder();
         builder
