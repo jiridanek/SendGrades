@@ -58,7 +58,7 @@ public class ISConnection {
         if (matcher.find()) {
             msg = matcher.group(1) + " : " + matcher.group(4);
         } else {
-            msg = "Couldn't get status message";
+            msg = null;
         }
         return msg;
     }
@@ -92,7 +92,7 @@ public class ISConnection {
     }
 
     public void authenticate(Credentials credentials) {
-        HttpPost httpPost = login("https://is.muni.cz/auth/www/374368", credentials.getName(), credentials.getPass());
+        HttpPost httpPost = login("https://is.muni.cz/auth/", credentials.getName(), credentials.getPass());
         performRequest(httpPost);
     }
 
@@ -104,7 +104,7 @@ public class ISConnection {
             if (consume) {
                 HttpResponse response = httpClient.execute(request, localContext);
                 int statusCode = response.getStatusLine().getStatusCode();
-                if (200 != statusCode) {
+                if (200 == statusCode) {
                     return "";
                 }
             } else {
@@ -113,11 +113,15 @@ public class ISConnection {
                 return response;
             }
         } catch (HttpResponseException e) {
-            e.printStackTrace();
+            System.out.println("HTTP request failed '" + e.toString() + "'.");
+            System.out.println("--possibly incorrect credentials.");
+            CLI.ExitWithDisclaimer();
         } catch (ClientProtocolException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            System.out.println("HTTP error '" + e.toString() + "'.");
+            CLI.ExitWithDisclaimer();
         } catch (IOException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            System.out.println("IO error '" + e.toString() + "'.");
+            CLI.ExitWithDisclaimer();
         }
         return null;
     }

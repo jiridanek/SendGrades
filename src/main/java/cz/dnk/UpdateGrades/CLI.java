@@ -10,6 +10,13 @@ import com.beust.jcommander.JCommander;
  * To change this template use File | Settings | File Templates.
  */
 public class CLI {
+    public static boolean DEBUG = false;
+    public static boolean LOGHTTP = false;
+
+    public static void ExitWithDisclaimer() {
+        System.out.println("If the problem persists, IS may have been changed and this script may be therefore broken");
+        System.exit(1);
+    }
     public static void main(String[] args) {
         CommandLineArgs myCommandLineArgs = new CommandLineArgs();
         try {
@@ -20,14 +27,16 @@ public class CLI {
             return;
         }
 
-//        java.util.logging.Logger.getLogger("org.apache.http.wire").setLevel(java.util.logging.Level.FINEST);
-//        java.util.logging.Logger.getLogger("org.apache.http.headers").setLevel(java.util.logging.Level.FINEST);
-//
-//        System.setProperty("org.apache.commons.logging.Log", "org.apache.commons.logging.impl.SimpleLog");
-//        System.setProperty("org.apache.commons.logging.simplelog.showdatetime", "true");
-//        System.setProperty("org.apache.commons.logging.simplelog.log.httpclient.wire", "debug");
-//        System.setProperty("org.apache.commons.logging.simplelog.log.org.apache.http", "debug");
-//        System.setProperty("org.apache.commons.logging.simplelog.log.org.apache.http.headers", "debug");
+        if (CLI.LOGHTTP) {
+            java.util.logging.Logger.getLogger("org.apache.http.wire").setLevel(java.util.logging.Level.FINEST);
+            java.util.logging.Logger.getLogger("org.apache.http.headers").setLevel(java.util.logging.Level.FINEST);
+
+            System.setProperty("org.apache.commons.logging.Log", "org.apache.commons.logging.impl.SimpleLog");
+            System.setProperty("org.apache.commons.logging.simplelog.showdatetime", "true");
+            System.setProperty("org.apache.commons.logging.simplelog.log.httpclient.wire", "debug");
+            System.setProperty("org.apache.commons.logging.simplelog.log.org.apache.http", "debug");
+            System.setProperty("org.apache.commons.logging.simplelog.log.org.apache.http.headers", "debug");
+        }
 
         if (myCommandLineArgs.ACTION == null) {
             System.out.println("Parameter '--action' needs to be specified");
@@ -66,56 +75,5 @@ public class CLI {
         connection.authenticate(myCredentials);
 
         action.perform(connection, myCommandLineArgs.DPARAMS);
-
-//        for (Cookie cooke : cookieStore.getCookies()) {
-//            System.out.println(cooke.toString());
-//        }
-//
-//        HttpHost target = (HttpHost) localContext.getAttribute(
-//                ExecutionContext.HTTP_TARGET_HOST);
-//        HttpUriRequest req = (HttpUriRequest) localContext.getAttribute(
-//                ExecutionContext.HTTP_REQUEST);
-//
-//
-//
-//
-//        System.out.println("Target host: " + target);
-//        System.out.println("Final request URI: " + req.getURI()); // relative URI (no proxy used)
-//        System.out.println("Final request method: " + req.getMethod());
-        //        httpPost = myWebUpload.SendFile(file, "nazev", "popis", "njmeno", "er", magicNumber);
-//
-//
-//        try {
-//            HttpResponse httpResponse = httpClient.execute(httpPost, localContext);
-//            HttpEntity httpEntity = httpResponse.getEntity();
-//            InputStream inputStream = httpEntity.getContent();
-//
-//            InputStreamReader is = new InputStreamReader(inputStream);
-//            BufferedReader br = new BufferedReader(is);
-//            String read = br.readLine();
-//
-//            while(read != null) {
-//                System.out.println(read);
-//                read = br.readLine();
-//            }
-//
-//            inputStream.close();
-//        } catch (IOException e) {
-//            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-//        }
-//
-//        for (Cookie cooke : cookieStore.getCookies()) {
-//            System.out.println(cooke.toString());
-//        }
-//
-//        target = (HttpHost) localContext.getAttribute(
-//                ExecutionContext.HTTP_TARGET_HOST);
-//        req = (HttpUriRequest) localContext.getAttribute(
-//                ExecutionContext.HTTP_REQUEST);
-//        System.out.println("Target host: " + target);
-//        System.out.println("Final request URI: " + req.getURI()); // relative URI (no proxy used)
-//        System.out.println("Final request method: " + req.getMethod());
-//
-//        httpClient.getConnectionManager().shutdown();
     }
 }

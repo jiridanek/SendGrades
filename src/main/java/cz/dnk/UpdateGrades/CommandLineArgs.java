@@ -21,15 +21,16 @@ public class CommandLineArgs {
     @Parameter(names = "--password", description = "Password to use when logging into IS. It is not encouraged to provide password as command line argument because of security concerns.")
     public String PASSWORD;
 
-    @Parameter(names = "--action", description = "Acton to perform. Can be one of: 'grades', 'web'.")
+    @Parameter(names = "--action", description = "Acton to perform. Can be one of: 'grades' to upload grades, or 'file' to upload a file to document directory.")
     public String ACTION;
 
     @DynamicParameter(names = "-D", description = "Additional parameters for action. For example '-Dfile=znamky.csv'. Can be specified multiple times if there is more additional parameters to be specified.")
     public Map<String, String> DPARAMS = new HashMap<String, String>();
 
-    @Parameter(names = "--parameters", description = "Print description for all additional parameters for a selected actions.") //TODO: If no --action is specified, help for all available actions is printed")
+    @Parameter(names = "--parameters", description = "Print description for all additional parameters -Dsomething for a selected action. Use together with '--action'.")
     public boolean PARAMETERS = false;
 
+    //test
     public static void main(String[] args) {
         CommandLineArgs myCommandLineArgs = new CommandLineArgs();
         new JCommander(myCommandLineArgs, args);

@@ -22,6 +22,10 @@ import java.util.Map;
  * Time: 8:32 PM
  * To change this template use File | Settings | File Templates.
  */
+
+/**
+ * --action grades -Dfakulta="1456" -Dobdobi="5785" -Dpredmet=705093"" -Dnbloku="vstupn%C3%AD%20test" -Dfile="0316.txt" -Dslid="1" -Dslho="2" -Dnerozlisovat_bloky="" -Dostry="n"
+ */
 public class GradesAction implements IAction {
 
     private String fakulta;
@@ -72,19 +76,27 @@ public class GradesAction implements IAction {
         }
 
         File file = new File(params.get("file"));
+        if (!file.exists()) {
+            System.out.println("File '" + params.get("file") + "' does not exist.");
+            System.exit(2);
+        }
 
         String magicNumber;
 
         HttpGet openForm = OpenForm();
         String form = connection.performRequest(openForm);
         magicNumber = ISConnection.ExtractMagicNumber(form);
-        System.out.println(magicNumber);
+        if(CLI.DEBUG) {
+            System.out.println(magicNumber);
+        }
 
         HttpPost mySelectBlock = selectBlock(magicNumber);
         String block = connection.performRequest(mySelectBlock);
         magicNumber = ISConnection.ExtractMagicNumber(block);
-        System.out.println(magicNumber);
-//        System.out.println(block);
+        if(CLI.DEBUG) {
+            System.out.println(magicNumber);
+//          System.out.println(block);
+        }
 
         HttpPost request = SendGradesFile(file,
                 params.get("slid"),
@@ -93,13 +105,21 @@ public class GradesAction implements IAction {
                 params.get("ostry"),
                 magicNumber);
         String status = connection.performRequest(request);
-        System.out.println(status);
+        if(CLI.DEBUG) {
+            System.out.println(status);
+        }
         String msg = ISConnection.ExtractMessage(status);
-        System.out.println(msg);
+        if (msg != null) {
+            System.out.println(msg);
+        } else {
+            System.out.println("Processing finished. Could not parse status message.");
+            CLI.ExitWithDisclaimer();
+        }
     }
 
     @Override
     public void printHelp() {
+        System.out.println("REQUIRED:\n");
         System.out.println("-Dfakulta=\"\" : use 1456 for ESF");
         System.out.println("-Dobdobi=\"\" : use 5785 for fall2012, 5786 for spring2013");
         System.out.println("-Dpredmet=\"\" : e.g, '705093'");
@@ -108,10 +128,11 @@ public class GradesAction implements IAction {
         System.out.println("-Dfile=\"\" : path to csv file with grades to upload");
         System.out.println("-Dslid=\"\" : pořadí sloupce s identifikátorem studia (čísl. od 1)");
         System.out.println("-Dslho=\"\" : pořadí sloupce nebo sloupců s obsahem bloku (více hodnot oddělujte mezerou");
-        System.out.println("-Dnerozlisovat_bloky=\"\" : Ignorovat změnu z původně exportovaného bloku na blok importovaný");
         System.out.println("-Dostry=\"\" : 'n' or 'a'; n -- import pouze na zkoušku, pro kontrolu chyb, a -- import naostro");
+        System.out.println("OPTIONAL:\n");
+        System.out.println("-Dnerozlisovat_bloky=\"\" : 1 -- Ignorovat změnu z původně exportovaného bloku na blok importovaný");
 
-        System.out.println("When in doubts what values to use for -Dpredmet and -Dnbloku, visit the uploading page in web browser and use the value in address bar=\"\" : use 1456 for ESF");
+        System.out.println("\nWhen in doubts what values to use for -Dpredmet and -Dnbloku, visit the uploading page in web browser and use the value in address bar");
     }
 
     public HttpGet OpenForm() {
@@ -159,10 +180,12 @@ public class GradesAction implements IAction {
         try {
             decodednbloku = URLDecoder.decode(nbloku, "utf-8");
         } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-            System.exit(1);
+            System.out.println("Error when decoding notebook name '" + e.toString() + "'.");
+            CLI.ExitWithDisclaimer();
         }
-        System.out.println(decodednbloku);
+        if(CLI.DEBUG) {
+            System.out.println(decodednbloku);
+        }
 
         try {
             multipartEntity.addPart("fakulta", new StringBody(fakulta));
@@ -230,7 +253,9 @@ public class GradesAction implements IAction {
             multipartEntity.addPart("exppar", new StringBody(exppar));
             multipartEntity.addPart("slid", new StringBody(slid));
             multipartEntity.addPart("slho", new StringBody(slho));
-            //multipartEntity.addPart("nerozlisovat_bloky", new StringBody(nerozlisovat_bloky));
+            if (nerozlisovat_bloky.equals("1")) {
+                multipartEntity.addPart("nerozlisovat_bloky", new StringBody(nerozlisovat_bloky));
+            }
             multipartEntity.addPart("ostry", new StringBody(ostry));
             multipartEntity.addPart("soubor", new FileBody(file));
             multipartEntity.addPart("nacti", new StringBody("Import"));
