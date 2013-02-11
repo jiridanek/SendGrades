@@ -256,7 +256,7 @@ public class GradesAction implements IAction {
             multipartEntity.addPart("exppar", new StringBody(exppar));
             multipartEntity.addPart("slid", new StringBody(slid));
             multipartEntity.addPart("slho", new StringBody(slho));
-            if (nerozlisovat_bloky.equals("1")) {
+            if (nerozlisovat_bloky != null && nerozlisovat_bloky.equals("1")) {
                 multipartEntity.addPart("nerozlisovat_bloky", new StringBody(nerozlisovat_bloky));
             }
             multipartEntity.addPart("ostry", new StringBody(ostry));
