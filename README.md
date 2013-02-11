@@ -50,15 +50,17 @@ program umí parametry `--uco` a `--password`. Pokud jsou uvedeny, použijí se 
 
 ####password.txt
 
-ve složce, ze které se program spouští, může být uložen soubor `password.txt`, ukázková verze je uložena zde v repozitáři. Stačí odmazat pomlčku ze začátku jména souboru a změnit na prvním řádku učo na vaše učo a heslo na vaše heslo.
+ve složce, ze které se program spouští, může být uložen soubor `password.txt`, ukázková verze je uložena zde v repozitáři. Stačí odmazat pomlčku na začátku jména souboru a změnit na prvním řádku učo na vaše učo a na druhém řádku heslo na vaše primární heslo.
 
 ####dialogové okno
 
-pokud není možné kompletní přihlašovací údaje z příkazové řádky ani ze souboru, vyskočí při spuštění programu dialogové okno, které se na potřebné údaje zeptá.
+pokud není možné zjistit kompletní přihlašovací údaje z příkazové řádky ani ze souboru, vyskočí při spuštění programu dialogové okno, které se na potřebné údaje zeptá.
 
 ###Odeslání známek do Bloku
 
-`java -jar SendGrades-0.1.jar --action grades -Dfakulta="1456" -Dobdobi="5785" -Dpredmet=705093"" -Dnbloku="vstupn%C3%AD%20test" -Dfile="0316.txt" -Dslid="1" -Dslho="2" -Dnerozlisovat_bloky="1" -Dostry="n"`
+	java -jar SendGrades-0.1.jar --action grades -Dfakulta="1456" \
+	-Dobdobi="5785" -Dpredmet="705093" -Dnbloku="vstupn%C3%AD%20test" \
+	-Dfile="0316.txt" -Dslid="1" -Dslho="2" -Dnerozlisovat_bloky="1" -Dostry="n"
 
 	Feb 10, 2013 10:39:20 PM org.apache.http.impl.client.DefaultRequestDirector tryExecute
 	INFO: I/O exception (org.apache.http.NoHttpResponseException) caught when processing request: The target server failed to respond
@@ -66,11 +68,11 @@ pokud není možné kompletní přihlašovací údaje z příkazové řádky ani
 	INFO: Retrying request
 	chyba : The file has erroneous contents. The column separator cannot be found.
 
-vezme soubor 0316.csv a nahraje ho do zvoleného Bloku. V tomto případě má soubor špatný formát, takže v závěrečné hlášce se ukáže chybová zpráva.
+vezme soubor `0316.txt` a nahraje ho do zvoleného Bloku. V tomto případě má soubor špatný formát, takže v závěrečné hlášce se ukáže chybová zpráva.
 
 ####Soupis parametrů
 
-`java -jar SendGrades-0.1.jar --action grades --parameters'
+`java -jar SendGrades-0.1.jar --action grades --parameters`
 
 	REQUIRED:
 	
@@ -91,7 +93,9 @@ vezme soubor 0316.csv a nahraje ho do zvoleného Bloku. V tomto případě má s
 
 ###Odeslání souboru do dokumentové složky
 
-`java -jar SendGrades-0.1.jar --action file -Dfile="0316.txt" -Dnazev="mujNazev" -Dpopis="mujPopis" -Dnjmeno="mojeNjmeno" -Dopt="wr" -Dfolder="/www/374368/38786227/"`
+	java -jar SendGrades-0.1.jar --action file -Dfile="0316.txt" \
+	-Dnazev="mujNazev" -Dpopis="mujPopis" -Dnjmeno="mojeNjmeno" \
+	-Dopt="wr" -Dfolder="/www/374368/38786227/"
 
 	Feb 10, 2013 10:40:14 PM org.apache.http.impl.client.DefaultRequestDirector tryExecute
 	INFO: I/O exception (org.apache.http.NoHttpResponseException) caught when processing request: The target server failed to respond
@@ -99,7 +103,7 @@ vezme soubor 0316.csv a nahraje ho do zvoleného Bloku. V tomto případě má s
 	INFO: Retrying request
 	potvrzeni : Saved successfully.
 
-uloží soubor 0316.txt do složky /www/374368/38786227/ v ISu; soubor se tam bude jmenovat mujNazev (první, červený), s alternativním názvem mojeNjmeno (zobrazuje se modře) a popisem "mujPopis" (zobrazí se po najetí myší na modrou bublinu). Pokud soubor s takovým jménem už existuje, přepíše ho.
+uloží soubor `0316.txt` do složky `/www/374368/38786227/` v ISu; soubor se tam bude jmenovat `mujNazev` (první, červený), s alternativním názvem `mojeNjmeno` (zobrazuje se modře) a popisem `mujPopis` (zobrazí se po najetí myší na modrou bublinu). Parametr `wr` značí, že pokud soubor s takovým jménem už existuje, bude přepsán.
 
 možnosti pro -Dopt jsou:
-er: ohlásit chybu, wr: přepsat, re: nový přejmenovat 
+`er`: ohlásit chybu, `wr`: přepsat, `re`: nový přejmenovat 

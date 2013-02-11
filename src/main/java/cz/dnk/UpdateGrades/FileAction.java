@@ -52,10 +52,13 @@ public class FileAction implements IAction {
             failed = true;
         }
 
-        File file = new File(params.get("file"));
-        if (!file.exists()) {
-            System.out.println("File '" + params.get("file") + "' does not exist.");
-            failed = true;
+        File file = null;
+        if (params.get("file") != null) {
+            file = new File(params.get("file"));
+            if (!file.exists()) {
+                System.out.println("File '" + params.get("file") + "' does not exist.");
+                failed = true;
+            }
         }
 
         if (failed) {

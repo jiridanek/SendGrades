@@ -62,19 +62,22 @@ public class GradesAction implements IAction {
 
         for (String key:keys) {
             if (params.get(key) == null) {
-                System.out.println("The -D'"+ key + "' Additional parameter is not specified.");
+                System.out.println("The '-D"+ key + "' Additional parameter is not specified.");
                 failed = true;
             }
         }
 
-        File file = new File(params.get("file"));
-        if (!file.exists()) {
-            System.out.println("File '" + params.get("file") + "' does not exist.");
-            failed = true;
+        File file = null;
+        if (params.get("file") != null) {
+            file = new File(params.get("file"));
+            if (!file.exists()) {
+                System.out.println("File '" + params.get("file") + "' does not exist.");
+                failed = true;
+            }
         }
 
         if (failed) {
-            System.out.println("Some of the required Additional parameters is not specified.\nUse --parameters together with the --action to see the list.");
+            System.out.println("Some of the required Additional parameters is not specified correctly.\nUse --parameters together with the --action to see the list.");
             return;
         }
 
